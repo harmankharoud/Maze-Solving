@@ -44,8 +44,6 @@ typedef struct Image
 #include "maze.c"
 #include "breadthfirst.c"
 
-unsigned char *Maze(Image_Dimentions im, unsigned char image_pixels[], Nodes route_nodes[], Nodes start_node[], Nodes end_node[]);
-
 void solve(char *arguments[]){
 
     clock_t c_i1, c_i2;
