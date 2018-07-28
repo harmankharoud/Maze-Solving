@@ -12,6 +12,31 @@ typedef struct Path{
   unsigned int position[2];
 } Path;
 
+//need bool for if/else statements
+typedef enum {
+    false, true
+} bool;
+
+// get the time to print how long it took to sove the maze
+char* loadTime(){
+
+    time_t current_time;
+    char* c_time_string;
+
+    /* Obtain current time. */
+    current_time = time(NULL);
+
+    /* Convert to local time format. */
+    c_time_string = ctime(&current_time);
+
+    return  c_time_string;
+}
+
+typedef struct Image
+{
+    int height, width;
+} Image_Dimentions;
+
 void initArray(Array *a, int array_size) {
   a->array = (unsigned char *)malloc(array_size * sizeof(unsigned char));
 }
@@ -26,7 +51,7 @@ int addMemory(Nodes **n, int currentSize, int numNewElems, int isNode)
     const int totalSize = currentSize + numNewElems;
     Nodes *temp = (Nodes*)realloc(*n, (totalSize * sizeof(Nodes)));
 
-    if (temp == NULL) {
+    if (temp == 0) {
         printf("Cannot allocate more memory.\n");
         return 0;
     } else {

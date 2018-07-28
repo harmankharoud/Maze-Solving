@@ -6,7 +6,7 @@ void addNeighbours(int position[4][2], Nodes node[]){
     }
 }
 
-void addSouthNeighbour(Nodes path_nodes[], Nodes node[], int southNode[]){    
+void addSouthNeighbour(Nodes path_nodes[], Nodes node[], unsigned int southNode[2]){    
     int size = getNodeSize();
     for(int i = 0; i < size; i++){
        if(path_nodes[i].position[0] == southNode[0] && path_nodes[i].position[1] == southNode[1]){
@@ -37,7 +37,7 @@ void addLastRowAsSouth(int compare[2], Nodes *path_nodes){
 
 }
 
-unsigned char *Maze(Image_Dimentions im, unsigned char image_pixels[], Nodes route_nodes[], Nodes start_node[], Nodes end_node[]) {
+struct Nodes *Maze(Image_Dimentions im, unsigned char image_pixels[], Nodes route_nodes[], Nodes start_node[], Nodes end_node[]) {
 
     int im_data = 1;
 

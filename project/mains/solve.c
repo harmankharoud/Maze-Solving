@@ -16,31 +16,6 @@
 
 #include "structure_arrays.c"
 
-//need bool for if/else statements
-typedef enum {
-    false, true
-} bool;
-
-// get the time to print how long it took to sove the maze
-char* loadTime(){
-
-    time_t current_time;
-    char* c_time_string;
-
-    /* Obtain current time. */
-    current_time = time(NULL);
-
-    /* Convert to local time format. */
-    c_time_string = ctime(&current_time);
-
-    return  c_time_string;
-}
-
-typedef struct Image
-{
-    int height, width;
-} Image_Dimentions;
-
 #include "maze.c"
 #include "breadthfirst.c"
 
@@ -58,6 +33,12 @@ void solve(char *arguments[]){
     int x,y,n;
     unsigned char* image = stbi_load(input_file, &x, &y, &n, 1);
     // rgb is now three bytes per pixel, width*height size. Or NULL if load failed.
+    
+    if (image == 0) {
+        printf("No image found or proccessed :( \n");
+        return;
+    }
+    
 
     printf("Creating Maze \n");
         //get an instance of get time function
@@ -65,7 +46,7 @@ void solve(char *arguments[]){
     
 
     printf("Maze started creating Nodes at: \n");
-    printf(t0);
+    printf("%s", t0);
     c_i1 = clock();
 
     im.height = x;
@@ -93,7 +74,7 @@ void solve(char *arguments[]){
     //getting a pointer back to the new address assigned to the path_node
     //its either same pointer or realloc changed the address in memory
     //either way it will return the proper pointer to address
-    unsigned char *path_node = Maze(im, image_pixels.array, route_nodes, &start_node, &end_node);
+    Nodes *path_node = Maze(im, image_pixels.array, route_nodes, &start_node, &end_node);
 
     //return path_node;
 
@@ -103,7 +84,7 @@ void solve(char *arguments[]){
 
        char* t_mazeSolved = loadTime();
        printf("Image Solved at: \n");
-       printf(t_mazeSolved);
+       printf("%s", t_mazeSolved);
 
        //get the size of path
        int path_size = getPathSize(-1);
@@ -219,14 +200,14 @@ void solve(char *arguments[]){
             stbi_image_free(image); 
             free(result_image);
 
-                //create an instance of get time function
+            //create an instance of get time function
             char* t1 = loadTime();
             printf("Maze solved at: \n");
-            printf(t1);
+            printf("%s", t1);
             c_i2 = clock();
             //int total = t1 -t0;
             float diff = ((float)(c_i2 - c_i1) / 1000000.0F ) * 1000;
-            printf ("Time elapsed: %f", diff, "\n"); 
+            printf ("Time elapsed: %f \n", diff); 
 
             
             //free(&solved_path);

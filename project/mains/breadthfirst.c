@@ -31,7 +31,7 @@ void remove_element(Nodes *node, int index, int array_length)
     for(i = index; i < array_length - 1; i++) node[i] = node[i + 1];
 }
 
-void getFromNodes(Nodes **storeTo, Nodes *route_nodes, int compare[2]){
+void getFromNodes(Nodes **storeTo, Nodes *route_nodes, unsigned int compare[2]){
     int number_of_nodes = getNodeSize(); 
     for (int i = 0; i < number_of_nodes; i++){
         if(route_nodes[i].position[0] == compare[0] && route_nodes[i].position[1] == compare[1] ){
