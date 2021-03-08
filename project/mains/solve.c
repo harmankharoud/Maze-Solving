@@ -40,7 +40,7 @@ void solve(char *arguments[]){
     
 
     printf("Creating Maze \n");
-        //get an instance of get time function
+    //get an instance of get time function
     char* t0 = loadTime();
     
 
@@ -52,11 +52,11 @@ void solve(char *arguments[]){
     im.width = y;
     int image_size = (x*y);
 
-    //this is to dynamically intiliaze array so that array size/memory can be passed from image size
+    //This is to dynamically intiliaze array so that array size/memory can be passed from image size
     Array image_pixels;
     initArray(&image_pixels, image_size);
 
-    // this need to be intilized here so we can realloc more memory
+    //This need to be intilized here so we can realloc more memory
     Nodes *route_nodes = (Nodes *) malloc(sizeof(Nodes));
 
     Nodes start_node;
