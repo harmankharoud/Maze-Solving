@@ -40,4 +40,4 @@
 .DS_Store
 project/.DS_Store
 project/mains/.DS_Store
-project/mains/solve
+project/compiled/solve

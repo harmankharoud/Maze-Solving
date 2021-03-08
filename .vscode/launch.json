@@ -1,7 +1,18 @@
 {
     "version": "0.2.0",
     "configurations": [
-    
+        {
+            "name": "C Launch (Mac)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/project/compiled/solve",
+            "args": ["${workspaceFolder}/project/images/tiny.png", "${workspaceFolder}/project/solvedimages/solvedImage.png"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        },
         {
             "name": "C++ Launch (Windows)",
             "type": "cppvsdbg",
