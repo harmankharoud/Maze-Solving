@@ -28,7 +28,6 @@ void solve(char *arguments[]){
     printf("Loading Image \n");
     char *input_file = arguments[1]; // input image to be solve
     char *output_file = arguments[2]; // output solved image.
-    // solve_using = argument[0];
     
     int x,y,n;
     unsigned char* image = stbi_load(input_file, &x, &y, &n, 1);
