@@ -12,3 +12,11 @@ To build and run project open using Visual studio code and use CTRL (cmd) + SHIF
 Change input/output images/path:
 To change the input maze image, it can be done inside launch.json file inside .vscode folder.
 To change the output solved image, it can also be done inside launch.json file inside .vscode folder.
+
+Change which traversal algorithm to use to find path:
+To change traversal algorithm, it can also be done inside launch.json file inside .vscode folder.
+List of traversal algorithms available: 
+  "breadthfirst" (done working), 
+  "depthfirst" (in progress), 
+  "astar" (in progress), 
+  "leftturn" (in progress)

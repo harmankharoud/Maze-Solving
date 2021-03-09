@@ -1,32 +1,35 @@
 
+//Use a selected Aglorithm so solve the maze.
 
-//mapping to inlculde different algorithms to solve the maze
+#include "breadthfirst.c"
 
-int (*factory(int selection, Image_Dimentions im, Nodes *route_nodes, Nodes start_node, Nodes end_node))[2]{
-    //create cases to make it easier to load
-    //[breadthfirst, depthfirst, astar, leftturn]
-    int (*path)[2] = malloc(sizeof(int[1][2]));
-
-    //#include "breadthfirst.c"
-    path = solver(im, route_nodes, start_node, end_node);
-//      switch(selection) {
-//       case 0 :
-//         #include "breadthfirst.c"
-//         path = solver(im, route_nodes, start_node, end_node);
-//         break;
-//       case 1 :
-//         //#include "depthfirst.c" 
-//         break;
-//       case 2 :
-//         //#include "astar.c" 
-//         break;
-//       case 3 :
-//        // #include "leftturn.c" 
-//         break;
-//       default :
-//         #include "breadthfirst.c"
-//         path = solver(im, route_nodes, start_node, end_node);
-//    }
+int (*factory(char *selected, Image_Dimentions im, Nodes *routeNodes, Nodes startNode, Nodes endNode))[2]{
+  //create cases to make it easier to load
+  const static char *listOfAlgorithms[4] = {"breadthfirst", "depthfirst", "astar", "leftturn"};
+  char selection;
+  for (int i = 0; i < 4; i++){
+    if(listOfAlgorithms[i][0] == selected[0]) {
+      selection = listOfAlgorithms[i][0];
+    }
+  }
+  
+  int (*path)[2] = malloc(sizeof(int[1][2]));
+  switch(selection) {
+  case 'b' :
+    path = solver(im, routeNodes, startNode, endNode);
+    break;
+  case 1 :
+    // depthFirst.
+    break;
+  case 2 :
+    // astar
+    break;
+  case 3 :
+    // leftturn
+    break;
+  default :
+    path = solver(im, routeNodes, startNode, endNode);
+  }
 
    return path;
 }

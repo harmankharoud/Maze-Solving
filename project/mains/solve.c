@@ -17,9 +17,9 @@
 #include "structure_arrays.c"
 
 #include "maze.c"
-#include "breadthfirst.c"
+#include "factory.c"
 
-void solve(char *inputFile, char *outputFile){
+void solve(char *inputFile, char *outputFile, char *traversalAlgorithm){
   // Load Image 
   printf("Loading Image \n");
   
@@ -76,7 +76,7 @@ void solve(char *inputFile, char *outputFile){
 
   if(pathNode != NULL){
     //get the solved path as a pointer to the localally created array in the file
-    int (*solvedPath)[2] = solver(im, pathNode, startNode, endNode);
+    int (*solvedPath)[2] = factory(traversalAlgorithm, im, pathNode, startNode, endNode);
 
     char* tMazeSolved = loadTime();
     printf("Image Solved at: \n");
@@ -218,11 +218,10 @@ int main(int argc, char *argv[])
   //include selected algoritm from cmd line here inside this function.
   //including inside main funtion is bad but temp solution for now.
 
-  //Nodes *pathNode = solve(argv);
-
   char *inputFile = argv[1]; // input image to be solve
   char *outputFile = argv[2]; // output solved image.
-  solve(inputFile, outputFile); 
+  char *traversalAlgorithm = argv[3]; // traversal algorithm used to solve
+  solve(inputFile, outputFile, traversalAlgorithm); 
   return 0;
 }
  
