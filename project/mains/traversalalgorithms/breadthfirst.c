@@ -34,7 +34,7 @@ void getFromNodes(Nodes **storeTo, Nodes *routeNodes, unsigned int compare[2]){
   }
 }
 
-int (*bfs(Image_Dimentions im, Nodes routeNodes[], Nodes startNode, Nodes endNode))[2]{
+int (*bfs(ImageDimensions im, Nodes routeNodes[], Nodes startNode, Nodes endNode))[2]{
   int height = im.height;
   int width = im.width;
 

@@ -35,7 +35,7 @@ char* loadTime(){
 typedef struct Image
 {
     int height, width;
-} Image_Dimentions;
+} ImageDimensions;
 
 void initArray(Array *a, int array_size) {
   a->array = (unsigned char *)malloc(array_size * sizeof(unsigned char));
@@ -45,7 +45,7 @@ void initStruct(Nodes *n, int size) {
     n = (Nodes *)malloc(size * sizeof(Nodes));
 }
 
-int total_nodes = 1;
+int totalNodes = 1;
 int addMemory(Nodes **n, int currentSize, int numNewElems, int isNode)
 {
     const int totalSize = currentSize + numNewElems;
@@ -59,22 +59,22 @@ int addMemory(Nodes **n, int currentSize, int numNewElems, int isNode)
     }
 
     if(isNode == 0){
-      total_nodes = totalSize;
+      totalNodes = totalSize;
     }
 
     return totalSize;
 }
 
 int getNodeSize(){
-  return total_nodes;
+  return totalNodes;
 }
 
-int path_size = 0;
+int pathSize = 0;
 int getPathSize(size){
   if(size != -1){
-    path_size = size;
+    pathSize = size;
   }
-  return path_size;
+  return pathSize;
 }
 
 void freeArray(Array *a) {

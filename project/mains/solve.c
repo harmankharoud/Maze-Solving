@@ -3,20 +3,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <time.h>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "../libs/stb_image.h"
 
 #define STBIW_ASSERT(x)
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include "../libs/stb_image_write.h"
 
-#include "structure_arrays.c"
-
-#include "maze.c"
+#include "datastructures.c"
+#include "generatepath.c"
 #include "factory.c"
 
 void solve(char *inputFile, char *outputFile, char *traversalAlgorithm){
@@ -44,7 +42,7 @@ void solve(char *inputFile, char *outputFile, char *traversalAlgorithm){
 
   startTime = clock();
 
-  Image_Dimentions im;
+  ImageDimensions im;
   im.height = width;
   im.width = height;
   int imageSize = (width*height);
@@ -66,11 +64,11 @@ void solve(char *inputFile, char *outputFile, char *traversalAlgorithm){
     imagePixels.array[i] = image[i];
   }
 
-  //send maze class all the info to read nodes and image size
+  //send generatepath class all the info to read nodes and image size
   //getting a pointer back to the new address assigned to the pathNode
   //its either same pointer or realloc changed the address in memory
   //either way it will return the proper pointer to address
-  Nodes *pathNode = Maze(im, imagePixels.array, routeNodes, &startNode, &endNode);
+  Nodes *pathNode = generatepath(im, imagePixels.array, routeNodes, &startNode, &endNode);
 
   //return pathNode;
 
