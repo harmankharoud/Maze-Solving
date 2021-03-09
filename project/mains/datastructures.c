@@ -14,27 +14,27 @@ typedef struct Path{
 
 //need bool for if/else statements
 typedef enum {
-    false, true
+  false, true
 } bool;
 
 // get the time to print how long it took to sove the maze
 char* loadTime(){
 
-    time_t current_time;
-    char* c_time_string;
+  time_t current_time;
+  char* c_time_string;
 
-    /* Obtain current time. */
-    current_time = time(NULL);
+  /* Obtain current time. */
+  current_time = time(NULL);
 
-    /* Convert to local time format. */
-    c_time_string = ctime(&current_time);
+  /* Convert to local time format. */
+  c_time_string = ctime(&current_time);
 
-    return  c_time_string;
+  return  c_time_string;
 }
 
 typedef struct Image
 {
-    int height, width;
+  int height, width;
 } ImageDimensions;
 
 void initArray(Array *a, int array_size) {
@@ -42,27 +42,27 @@ void initArray(Array *a, int array_size) {
 }
 
 void initStruct(Nodes *n, int size) {
-    n = (Nodes *)malloc(size * sizeof(Nodes));
+  n = (Nodes *)malloc(size * sizeof(Nodes));
 }
 
 int totalNodes = 1;
 int addMemory(Nodes **n, int currentSize, int numNewElems, int isNode)
 {
-    const int totalSize = currentSize + numNewElems;
-    Nodes *temp = (Nodes*)realloc(*n, (totalSize * sizeof(Nodes)));
+  const int totalSize = currentSize + numNewElems;
+  Nodes *temp = (Nodes*)realloc(*n, (totalSize * sizeof(Nodes)));
 
-    if (temp == 0) {
-        printf("Cannot allocate more memory.\n");
-        return 0;
-    } else {
-        *n = temp;
-    }
+  if (temp == 0) {
+    printf("Cannot allocate more memory.\n");
+    return 0;
+  } else {
+    *n = temp;
+  }
 
-    if(isNode == 0){
-      totalNodes = totalSize;
-    }
+  if(isNode == 0){
+    totalNodes = totalSize;
+  }
 
-    return totalSize;
+  return totalSize;
 }
 
 int getNodeSize(){
