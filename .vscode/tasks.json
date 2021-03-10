@@ -1,14 +1,9 @@
 {
   "version": "2.0.0",
-  "command": "${workspaceRoot}/.vscode/build.bat",
-  "args": [
-    "-g",
-    "solve.c"
-  ],
   "tasks": [
     {
       "type": "shell",
-      "label": "gcc build active file",
+      "label": "macbuild",
       "command": "/usr/bin/gcc",
       "args": [
         "${workspaceRoot}/project/mains/solve.c",
@@ -24,6 +19,11 @@
         "kind": "build",
         "isDefault": true
       }
+    },
+    {
+      "type": "shell",
+      "label": "windowsbuild",
+      "command": "${workspaceRoot}/.vscode/build.bat"
     }
   ]
 }

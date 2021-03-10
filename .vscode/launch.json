@@ -11,7 +11,8 @@
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
-            "MIMode": "lldb"
+            "MIMode": "lldb",
+            "preLaunchTask": "macbuild",
         },
         {
             "name": "C++ Launch (Windows)",
@@ -22,7 +23,8 @@
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
             "environment": [],
-            "externalConsole": true
+            "externalConsole": true,
+            "preLaunchTask": "windowsbuild"
         },
         {
             "name": "C++ Attach (Windows)",
