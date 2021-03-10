@@ -36,7 +36,7 @@ void addLastRowAsSouth(int compare[2], Nodes *pathNodes){
   }
 }
 
-struct Nodes *generatepath(ImageDimensions im, unsigned char imagePixels[], Nodes routeNodes[], Nodes startNode[], Nodes endNode[]) {
+struct Nodes *generatepath(ImageDimensions im, u_int8_t imagePixels[], Nodes routeNodes[], Nodes startNode[], Nodes endNode[]) {
   int height = im.height;
   int width = im.width;
   int imageSize = height * width;

@@ -37,25 +37,17 @@ typedef struct Image
   int height, width;
 } ImageDimensions;
 
-void initArray(Array *a, int array_size) {
-  a->array = (unsigned char *)malloc(array_size * sizeof(unsigned char));
-}
-
-void initStruct(Nodes *n, int size) {
-  n = (Nodes *)malloc(size * sizeof(Nodes));
-}
-
 int totalNodes = 1;
-int addMemory(Nodes **n, int currentSize, int numNewElems, int isNode)
+int addMemory(Nodes **node, int currentSize, int numNewElems, int isNode)
 {
   const int totalSize = currentSize + numNewElems;
-  Nodes *temp = (Nodes*)realloc(*n, (totalSize * sizeof(Nodes)));
+  Nodes *temp = (Nodes*)realloc(*node, (totalSize * sizeof(Nodes)));
 
   if (temp == 0) {
     printf("Cannot allocate more memory.\n");
     return 0;
   } else {
-    *n = temp;
+    *node = temp;
   }
 
   if(isNode == 0){
