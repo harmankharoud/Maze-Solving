@@ -68,12 +68,3 @@ int getPathSize(size){
   }
   return pathSize;
 }
-
-void freeArray(Array *a) {
-  free(a->array);
-}
-
-void freeStruct(Nodes *n, Path *p){
-  free(n);
-  free(p);
-}
