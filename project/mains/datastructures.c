@@ -1,5 +1,9 @@
-//the nodes from the image where possible to move up/below/left/right
-typedef struct Nodes{
+
+// intilize node to have all zeros so that nothing is out of the blue garbage memory.
+#define INIT_NODE(X) Nodes X = {.position = {0, 0}, .neighbours = {{0, 0}, {0, 0}, {0, 0}, {0, 0}}}
+
+//@TODO should rename this to NODE since its just one node
+typedef struct Nodes {
   unsigned int position[2];
   unsigned int neighbours[4][2];
 } Nodes;
@@ -34,37 +38,33 @@ char* loadTime(){
 
 typedef struct Image
 {
-  int height, width;
+  unsigned int height, width;
 } ImageDimensions;
 
-int totalNodes = 1;
-int addMemory(Nodes **node, int currentSize, int numNewElems, int isNode)
+void allocateMoreMem(Nodes **graphNodes, unsigned int size)
 {
-  const int totalSize = currentSize + numNewElems;
-  Nodes *temp = (Nodes*)realloc(*node, (totalSize * sizeof(Nodes)));
+  Nodes *temp = (Nodes*)realloc(*graphNodes, (size * sizeof(Nodes)));
 
   if (temp == 0) {
     printf("Cannot allocate more memory.\n");
-    return 0;
   } else {
-    *node = temp;
+    *graphNodes = temp;
   }
-
-  if(isNode == 0){
-    totalNodes = totalSize;
-  }
-
-  return totalSize;
 }
 
-int getNodeSize(){
-  return totalNodes;
+unsigned int graphNodeSize = 0;
+unsigned int getGraphNodesSize(){
+  return graphNodeSize;
+}
+void setGraphNodesSize(unsigned int size) {
+  graphNodeSize = size;
 }
 
-int pathSize = 0;
-int getPathSize(size){
-  if(size != -1){
-    pathSize = size;
-  }
+unsigned int pathSize = 0;
+void setPathSize(size){  
+  pathSize = size;
+}
+
+unsigned int getPathSize() {
   return pathSize;
 }

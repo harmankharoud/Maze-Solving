@@ -1,135 +1,106 @@
 
-void addToQueue(Nodes to[], Nodes from, int size){
-  for(int i = 0; i < size; i++){
-    to[i] = from;
-  }
-}
-
-void assignNode(Nodes **current, Nodes from){
-  *current = &from;
-}
-
-
-void unshiftQueue(Nodes *node, int size, Nodes *newNode){
-  for (int i = size; i > 0; i--) {      
-    Nodes *tempUnshift = (Nodes *) malloc(sizeof(Nodes));    
-    memcpy(tempUnshift, &node[i - 1], sizeof(Nodes));    
-    node[i] = tempUnshift[0];      
-  }
-
-  memcpy(&node[0], newNode, sizeof(Nodes));
-}
-
-void removeNode(Nodes *node, int index, int size){
-  int i;
-  for(i = index; i < size - 1; i++) node[i] = node[i + 1];
-}
-
-void getFromNodes(Nodes **storeTo, Nodes *routeNodes, unsigned int compare[2]){
-  int nodesSize = getNodeSize(); 
-  for (int i = 0; i < nodesSize; i++){
-    if(routeNodes[i].position[0] == compare[0] && routeNodes[i].position[1] == compare[1] ){
-      *storeTo = &routeNodes[i];            
+void getNodeFromGraphNodes(Nodes **storeTo, Nodes *graphNodes, unsigned int compare[2], unsigned int graphNodesSize){
+  for (int i = 0; i < graphNodesSize; i++){
+    if(graphNodes[i].position[0] == compare[0] && graphNodes[i].position[1] == compare[1] ){
+      *storeTo = &graphNodes[i];
+      break;          
     }
   }
 }
 
-int (*bfs(ImageDimensions im, Nodes routeNodes[], Nodes startNode, Nodes endNode))[2]{
-  int height = im.height;
-  int width = im.width;
+unsigned int (*bfs(ImageDimensions im, Nodes graphNodes[], Nodes startNode, Nodes endNode))[2]{
+  unsigned int height = im.height;
+  unsigned int width = im.width;
+  unsigned int imageSize = height * width;
 
-  int imageSize = height * width;
-  Nodes *queue = (Nodes *) malloc(sizeof(Nodes));
+  // Intialize queue with 64% of the graphNodes memory allocation.
+  unsigned int graphNodesSize = getGraphNodesSize();
+  // unsigned int queueSize = (unsigned int)graphNodeSize * 0.64;
+  Nodes *queue = (Nodes *) malloc(graphNodeSize * sizeof(Nodes));
 
-  int (*prev)[2] = malloc(imageSize * sizeof(int[1][2]));
+  // Manually allocating memory so we can deallocate once done with traversal search aka this class.
+  unsigned int (*prev)[2] = malloc(imageSize * sizeof(unsigned int[1][2]));
 
-  addToQueue(queue, startNode, 1);
+  unsigned int queueIndex = 0;
 
-  int *visited = (int *)malloc(imageSize *sizeof(int));
+  queue[queueIndex] = startNode;
 
-  for(int i = 0; i < imageSize; i++){
-      visited[i] = 0;
-  }
+  unsigned int *visited = (unsigned int *)malloc(imageSize * sizeof(unsigned int));
 
-  visited[startNode.position[0] * width + startNode.position[1]] = 1;
-
-  int size = 1;
+  memset(visited, 0, sizeof(imageSize));
+  unsigned int nPos = startNode.position[0] * width + startNode.position[1];
+  visited[nPos] = 1;
+  unsigned int currIndex = 0;
     
   while(queue){
-    //get the current node as the last element from queue/pop queue
-    Nodes *current = (Nodes *) malloc(sizeof(Nodes));
+    //@TODO Fix this and use queueSize variable on line: 18, will help with memory management
+    // if(queueIndex >= queueSize) { 
+    //   // Reallocate more memory
+    //   // Reallocation can be done based index
+    //   // If index is still half way through
+    //   // Allocate same size again and 
+    //   // If index is quater the way reallocate half of the orginal allocation and so on...
+    //   unsigned int size = (unsigned int)queueSize / 2;
+    //   queueSize += size;
 
-    assignNode(&current, queue[size - 1]);
-    removeNode(queue, size - 1, size); 
-
-    size = size - 1;
-
-    Nodes *tmp = realloc(queue, (size) * sizeof(Nodes));
-    if (tmp == NULL && size > 1) {
-      /* No memory available */
-      printf("No memory available");
-    }
-    queue = tmp;
+    //   allocateMoreMem(&queue, queueSize);
+    // }
     
+    Nodes *current = (Nodes *) malloc(sizeof(Nodes));
+    current = &queue[currIndex];
+    if(currIndex <= queueIndex) currIndex++;
+
+    // if(current->position[0] == 0 && current->position[1] == 0) break;;
+
     if(current->position[0] == endNode.position[0] && current->position[1] == endNode.position[1]){
       break;
     }
 
     for(int i = 0; i < 4; i++){
-      if((current->neighbours[i][0] != 0) && (current->neighbours[i][1] != 0)){
+      if(current->neighbours[i][0] != 0 && current->neighbours[i][1] != 0){
         int nPos = current->neighbours[i][0] * width + current->neighbours[i][1];
         if(visited[nPos] == 0) {
           prev[nPos][0] = current->position[0];
           prev[nPos][1] = current->position[1];
-
           visited[nPos] = 1;
-          
-          size++;
-
+          queueIndex++;
           Nodes *temp = (Nodes *) malloc(sizeof(Nodes));
-
-          getFromNodes(&temp, routeNodes, current->neighbours[i]);
-          addMemory(&queue, size, 1, -1);
-          unshiftQueue(queue, size, temp);
+          getNodeFromGraphNodes(&temp, graphNodes, current->neighbours[i], graphNodesSize);
+          queue[queueIndex] = *temp;
         }
       }
     }
   }
 
-  int (*path)[2] = malloc(sizeof(int[1][2]));
-  int (*nCurrent)[2] = malloc(sizeof(int[1][2]));
-  nCurrent[0][0] = endNode.position[0];
-  nCurrent[0][1] = endNode.position[1];
-  int pathSize = 0;
+
+  unsigned int (*revPath)[2] = malloc(imageSize * sizeof(int[1][2]));
+  unsigned int pathIndex = 0;
+  unsigned int pathSize = 1;
+  unsigned int desitnationPos = endNode.position[0] * width + endNode.position[1];
   
-  while (nCurrent[0][1] && nCurrent[0][0]) {
+  while (true) {
+    revPath[pathIndex][0] = prev[desitnationPos][0];
+    revPath[pathIndex][1] = prev[desitnationPos][1];
     pathSize++;
-    
-    for (int i = pathSize; i > 0; i--) {
-      int (*tempUnshift)[2] = malloc(sizeof(int[1][2]));          
-      memcpy(&tempUnshift[0], &path[i - 1], sizeof(int[1][2]));          
-      path[i][0] = tempUnshift[0][0];
-      path[i][1] = tempUnshift[0][1];
-
-      free(tempUnshift);
-    }
-
-    int (*tempCurrent)[2] = malloc(sizeof(int[1][2]));
-    tempCurrent[0][0] = nCurrent[0][0];
-    tempCurrent[0][1] = nCurrent[0][1];    
-    memcpy(&path[0], &tempCurrent[0], sizeof(int[1][2])); 
-    int position = nCurrent[0][0] * width + nCurrent[0][1];
-    nCurrent[0][0] = prev[position][0];
-    nCurrent[0][1] = prev[position][1]; 
-
-    free(tempCurrent); 
+    if(prev[desitnationPos][0] == startNode.position[0] && prev[desitnationPos][1] == startNode.position[1]) break;
+    desitnationPos = revPath[pathIndex][0] * width + revPath[pathIndex][1];
+    pathIndex++;
+  }
+  unsigned int (*path)[2] = malloc(pathSize * sizeof(int[1][2]));
+  for (int i = pathIndex, j = 0; i >= 0; i--, j++)
+  {
+    path[j][0] = revPath[i][0];
+    path[j][1] = revPath[i][1];
   }
 
-  getPathSize(pathSize);
-  free(nCurrent);
+  memcpy(&path[pathIndex][0], &revPath[0][0], sizeof(unsigned int[1][2]));  
+  pathIndex++;
+  memcpy(&path[pathIndex][0], &endNode.position[0], sizeof(unsigned int[1][2]));  
+
+  setPathSize(pathSize);
   free(queue);
-  free(routeNodes);
-  free(prev);
+  free(graphNodes);
+  free(revPath);
 
   return path;
 

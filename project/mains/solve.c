@@ -22,7 +22,7 @@ void solve(char *inputFile, char *outputFile, char *traversalAlgorithm){
   printf("Loading Image \n");
   
   int width,height,n;
-  u_int8_t *image = stbi_load(inputFile, &width, &height, &n, 1);
+  unsigned char *image = stbi_load(inputFile, &width, &height, &n, 1);  
 
   // rgb is now three bytes per pixel, width*height size. Or NULL if load failed.    
   if (image == 0) {
@@ -42,81 +42,31 @@ void solve(char *inputFile, char *outputFile, char *traversalAlgorithm){
   ImageDimensions im;
   im.height = width;
   im.width = height;
-  int imageSize = (width*height);
+  unsigned int imageSize = (width*height);
 
-  //Alloc memory, so we can realloc more memory
-  Nodes *routeNodes = (Nodes *) malloc(sizeof(Nodes));
-  Nodes startNode;
-  Nodes endNode;
+  INIT_NODE(startNode);
+  INIT_NODE(endNode);
 
   //send generatepath class all the info to read nodes and image size
-  //getting a pointer back to the new address assigned to the pathNode
+  //getting a pointer back to the new address assigned to the graphNodes
   //its either same pointer or realloc changed the address in memory
   //either way it will return the proper pointer to address
-  Nodes *pathNode = generatepath(im, image, routeNodes, &startNode, &endNode);
+  Nodes *graphNodes = generatepath(im, image, &startNode, &endNode);
 
-  //return pathNode;
+  //return graphNodes;
 
-  if(pathNode != NULL){
+  if(graphNodes != NULL){
     //get the solved path as a pointer to the localally created array in the file
-    int (*solvedPath)[2] = factory(traversalAlgorithm, im, pathNode, startNode, endNode);
+    unsigned int (*solvedPath)[2] = factory(traversalAlgorithm, im, graphNodes, startNode, endNode);
 
     char* tMazeSolved = loadTime();
     printf("Image Solved at: \n");
     printf("%s", tMazeSolved);
 
     //get the size of path
-    int pathSize = getPathSize(-1);
-
-    int resultImageSize = 3*imageSize;
-    
-    u_int8_t *resultImage = malloc(resultImageSize * sizeof(u_int8_t));
-
-    int track = 0;
-    int isFirst = 0;
-    for(int i = 0; i < imageSize; i++){
-      if(image[i] == 255){
-          //add to three more bytes, its a png
-        if(isFirst == 0){
-          isFirst = 1;
-          int rgbValue = 0;
-          while(rgbValue < 3){
-            if(rgbValue == 0){
-              resultImage[rgbValue + track] = 255;
-            } else{
-              resultImage[rgbValue + track] = 0;
-            }
-            rgbValue++;
-            if(rgbValue == 3){
-              track += 3;
-            }
-          }
-        } else{
-          int rgbValue = 0;
-          while(rgbValue < 3){
-            resultImage[rgbValue + track] = 255;
-            rgbValue++;
-            if(rgbValue == 3){
-              track += 3;
-            }
-          }
-        }                
-      }
-
-      if(image[i] == 0){
-        int rgbValue = 0;
-        while(rgbValue < 3){
-          resultImage[rgbValue + track] = 0;
-          rgbValue++;
-          if(rgbValue == 3){
-            track += 3;
-          } 
-        }
-      }
-    }
-
-    //free the mem reserved for path        
-    for(int i = 0; i < pathSize; i++){
+    unsigned int pathSize = getPathSize();
+           
+    for(unsigned int i = 0; i < pathSize; i++){
       int min;
       int max;
       if(solvedPath[i][0] == solvedPath[i + 1][0]){
@@ -130,17 +80,7 @@ void solve(char *inputFile, char *outputFile, char *traversalAlgorithm){
 
         for(int j = min; j < max; j++){
           int k = j + (solvedPath[i][0] * height);
-          int offsetValue = k * 3;
-          int rgbValue = 0;
-          while(rgbValue < 3){
-            if(rgbValue == 0){
-              resultImage[k * 3] = 255;
-            } else{
-              resultImage[offsetValue] = 0;
-            }
-            offsetValue++;
-            rgbValue++;
-          }
+          image[k] = 100;
         }
       } else if(solvedPath[i][1] == solvedPath[i + 1][1]){
         if(solvedPath[i][0] < solvedPath[i + 1][0]){
@@ -153,28 +93,16 @@ void solve(char *inputFile, char *outputFile, char *traversalAlgorithm){
 
         for(int j = min; j < max; j++){
           int k = (j * height) + solvedPath[i][1];
-          int offsetValue = k * 3;
-          int rgbValue = 0;
-          while(rgbValue < 3){
-            if(rgbValue == 0){
-              resultImage[offsetValue] = 255;
-            } else{
-              resultImage[offsetValue] = 0;
-            }
-            offsetValue++;
-            rgbValue++;
-          }
+          image[k] = 100;
         }
       }
-    } 
+    }
 
     STBIW_ASSERT(resultImage);
-    int imageSolved = stbi_write_png(outputFile, width, height, 3, resultImage, width*3);
+    int imageSolved = stbi_write_png(outputFile, width, height, 1, image, width);
     if (imageSolved == 1){
       //free the memory after image succesfully created.
       stbi_image_free(image);
-      free(resultImage);
-      free(routeNodes);
 
       //create an instance of get time function
       char* t1 = loadTime();
@@ -183,9 +111,6 @@ void solve(char *inputFile, char *outputFile, char *traversalAlgorithm){
       endTime = clock();
       float diff = ((float)(endTime - startTime) / 1000000.0F ) * 1000;
       printf ("Time elapsed: %f \n", diff); 
-
-      
-      //free(&solvedPath);
     } else{
       printf("Failed to write file.");
     }
@@ -196,7 +121,7 @@ void solve(char *inputFile, char *outputFile, char *traversalAlgorithm){
 int main(int argc, char *argv[]) 
 {
 
-  //create a struct to get back startNode, endNode, pathNode, imageSize
+  //create a struct to get back startNode, endNode, graphNodes, imageSize
   //return all the values from solve function.
   //include selected algoritm from cmd line here inside this function.
   //including inside main funtion is bad but temp solution for now.

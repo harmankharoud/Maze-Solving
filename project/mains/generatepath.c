@@ -54,12 +54,12 @@ void processAddingNSNeighbours(unsigned int currRow, unsigned int currCol, unsig
 
   
   unsigned int neighbourSouth[2] = {currRow, currCol};
-  addNeighbourSouth(neighbourSouth, graphNodesS);        
+  addNeighbourSouth(neighbourSouth, graphNodesS);   
   
   resetNorthNodes(width, northNodes);
 }
 
-struct Nodes *generatepath(ImageDimensions im, u_int8_t imagePixels[], Nodes startNode[], Nodes endNode[]) {
+struct Nodes *generatepath(ImageDimensions im, unsigned char imagePixels[], Nodes startNode[], Nodes endNode[]) {
   unsigned int height = im.height;
   unsigned int width = im.width;
   unsigned int imageSize = height * width;
@@ -102,9 +102,6 @@ struct Nodes *generatepath(ImageDimensions im, u_int8_t imagePixels[], Nodes sta
       graphNodes[graphNodesIndex].position[1] = i;
       addNeighbourSouth(position, &graphNodes[graphNodesIndex]);
       
-      startNode->position[0] = 0;
-      startNode->position[1] = i;
-      addNeighbourSouth(position, &startNode[0]);
       unsigned int currCol = i % width;
       setNorthNodes(0, i, graphNodesIndex, northNodes[currCol]);
       graphNodesIndex++;
@@ -115,8 +112,7 @@ struct Nodes *generatepath(ImageDimensions im, u_int8_t imagePixels[], Nodes sta
   
   unsigned int currLeftNode[2] = {0, 0};
   // Go through the whole image to generate graph nodes
-  for (unsigned int i = width; i < imageSize - width; i++)
-  {
+  for (unsigned int i = width; i < imageSize - width; i++){
     unsigned int currRow = (unsigned int) i / width;
     unsigned int currCol = i % width;
 
@@ -134,18 +130,18 @@ struct Nodes *generatepath(ImageDimensions im, u_int8_t imagePixels[], Nodes sta
       currLeftNode[1] = 0;
       continue;
     }
+    //@TODO Fix this didnt break even for 2k and 4k images but need to make sure enough memory is avaialble for graphNodes
+    // if(graphNodesIndex >= graphNodeMemSize) { 
+    //   // Reallocate more memory
+    //   // Reallocation can be done based index
+    //   // If index is still half way through
+    //   // Allocate same size again and 
+    //   // If index is quater the way reallocate half of the orginal allocation and so on...
+    //   unsigned int size = graphNodeMemSize / 2;
+    //   graphNodeMemSize += size;
 
-    if(graphNodesIndex >= graphNodeMemSize) { 
-      // Reallocate more memory
-      // Reallocation can be done based index
-      // If index is still half way through
-      // Allocate same size again and 
-      // If index is quater the way reallocate half of the orginal allocation and so on...
-      unsigned int size = graphNodeMemSize / 2;
-      graphNodeMemSize += size;
-
-      allocateMoreMem(&graphNodes, graphNodeMemSize);
-    }
+    //   allocateMoreMem(&graphNodes, graphNodeMemSize);
+    // }
 
     if(imagePixels[colBefore] == 0 && imagePixels[colAfter] > 0) { //WALL PATH PATH
       graphNodes[graphNodesIndex].position[0] = currRow;
@@ -190,29 +186,40 @@ struct Nodes *generatepath(ImageDimensions im, u_int8_t imagePixels[], Nodes sta
         setNorthNodes(currRow, currCol, graphNodesIndex, northNodes[currCol]);
       }
       graphNodesIndex++;
+    } else if (imagePixels[colBefore] == 0 && imagePixels[colAfter] == 0 && imagePixels[idxRowBelow] == 0) { // WALL PATH WALL
+      graphNodes[graphNodesIndex].position[0] = currRow;
+      graphNodes[graphNodesIndex].position[1] = currCol;
+
+      if(northNodes[currCol][0] != width + 1 && northNodes[currCol][1] != width + 1) { 
+        processAddingNSNeighbours(currRow, currCol, width, northNodes[currCol], &graphNodes[graphNodesIndex], &graphNodes[northNodes[currCol][2]]);  
+      }
+
+      if(imagePixels[idxRowBelow] > 0) {
+        setNorthNodes(width + 1, width + 1, graphNodesIndex, northNodes[currCol]);
+      }
+      graphNodesIndex++;
     }
   }
 
-    /*
+  /*
     Lets take care of last graph node. 
-    Also add end graph node.
+    Add start and end graph node.
   */
+
+  memcpy(&startNode->position[0], &graphNodes->position[0], sizeof(Nodes));
 
   for (unsigned int i = (imageSize - width + 1); i < imageSize - 1; i++){
     if (imagePixels[i] > 0){
       unsigned int currRow = (unsigned int)i / width;
       unsigned int currCol = i % width;
       unsigned int position[2] = {currRow - 1, currCol};
-
       graphNodes[graphNodesIndex].position[0] = currRow;
       graphNodes[graphNodesIndex].position[1] = currCol;
-      addNeighbourNorth(position, &graphNodes[graphNodesIndex]);
+      processAddingNSNeighbours(currRow, currCol, width, northNodes[currCol], &graphNodes[graphNodesIndex], &graphNodes[northNodes[currCol][2]]);
       
       endNode->position[0] = currRow;
       endNode->position[1] = currCol;
       addNeighbourNorth(position, &endNode[0]);
-      // unsigned int currCol = i % width;
-      // setNorthNodes(0, i, graphNodesIndex, northNodes[currCol]);
       graphNodesIndex++;
       break;
     } 
@@ -223,8 +230,9 @@ struct Nodes *generatepath(ImageDimensions im, u_int8_t imagePixels[], Nodes sta
   // Uncomment below to see all the neighbours and nodes in graphNodes
   // Just FYI printf is expensive, if there are say about even 5k graphNodes it will take some time.
   // Don't try printing too many graphnodes will take forever
-  // for (int i = 0; i < graphNodesIndex; i++){
+  // for (int i = 0; i < 100; i++){
   //   printf("Nodes[%i, %i] Neighbours{N[%i,%i], E[%i,%i], S[%i,%i], W[%i,%i]} at %i \n", graphNodes[i].position[0], graphNodes[i].position[1],graphNodes[i].neighbours[0][0],graphNodes[i].neighbours[0][1],graphNodes[i].neighbours[1][0],graphNodes[i].neighbours[1][1],graphNodes[i].neighbours[2][0],graphNodes[i].neighbours[2][1],graphNodes[i].neighbours[3][0],graphNodes[i].neighbours[3][1], (i + 1));
   // }  
+
   return graphNodes;
 }
